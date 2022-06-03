@@ -4,13 +4,17 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nirmalbhetwal.location3_googlemapdemo.databinding.ActivityMapsBinding;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -56,11 +60,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng toronto = new LatLng(43.65, -79.38);
         LatLng brampton = new LatLng(43.7315, -79.7624);
         LatLng mississauga = new LatLng(43.5890, -79.6441);
+        LatLng vaughan = new LatLng(43.8563, -79.5085);
         mMap.addMarker(new MarkerOptions().position(toronto).title("Marker in Toronto"));
         mMap.addMarker(new MarkerOptions().position(brampton).title("Marker in Brampton"));
+        mMap.addMarker(new MarkerOptions().position(mississauga).title("Marker in Mississauga"));
+        mMap.addMarker(new MarkerOptions().position(vaughan).title("Marker in Vaughan"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(toronto));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(brampton));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mississauga));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(vaughan));
 
+        LatLngBounds.Builder boundBuilder = new LatLngBounds.Builder();
 
+        ArrayList<LatLng> markers = new ArrayList<LatLng>();
+        markers.add(toronto);
+        markers.add(brampton);
+        markers.add(mississauga);
+        markers.add(vaughan);
+
+        for (LatLng marker : markers) {
+            boundBuilder.include(marker);
+        }
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.10);
+        LatLngBounds bounds = boundBuilder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,  width, height, padding);
+        mMap.animateCamera(cameraUpdate);
     }
 }
