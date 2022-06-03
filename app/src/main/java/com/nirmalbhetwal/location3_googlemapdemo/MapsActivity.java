@@ -2,6 +2,7 @@ package com.nirmalbhetwal.location3_googlemapdemo;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.nirmalbhetwal.location3_googlemapdemo.databinding.ActivityMapsBinding;
 
 import java.util.ArrayList;
@@ -87,5 +89,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds bounds = boundBuilder.build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,  width, height, padding);
         mMap.animateCamera(cameraUpdate);
+
+        PolylineOptions line = new PolylineOptions().add(toronto, mississauga, brampton, vaughan, toronto)
+                .width(5)
+                .color(Color.RED);
+        mMap.addPolyline(line);
     }
 }
