@@ -1,9 +1,12 @@
 package com.nirmalbhetwal.location3_googlemapdemo;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,10 +16,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.nirmalbhetwal.location3_googlemapdemo.databinding.ActivityMapsBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -63,10 +68,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng brampton = new LatLng(43.7315, -79.7624);
         LatLng mississauga = new LatLng(43.5890, -79.6441);
         LatLng vaughan = new LatLng(43.8563, -79.5085);
-        mMap.addMarker(new MarkerOptions().position(toronto).title("Marker in Toronto"));
-        mMap.addMarker(new MarkerOptions().position(brampton).title("Marker in Brampton"));
-        mMap.addMarker(new MarkerOptions().position(mississauga).title("Marker in Mississauga"));
-        mMap.addMarker(new MarkerOptions().position(vaughan).title("Marker in Vaughan"));
+        mMap.addMarker(new MarkerOptions().position(toronto).title("Marker in Toronto").snippet("A"));
+        mMap.addMarker(new MarkerOptions().position(brampton).title("Marker in Brampton").snippet("B"));
+        mMap.addMarker(new MarkerOptions().position(mississauga).title("Marker in Mississauga").snippet("C"));
+        mMap.addMarker(new MarkerOptions().position(vaughan).title("Marker in Vaughan").snippet("D"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(toronto));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(brampton));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mississauga));
@@ -90,9 +95,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,  width, height, padding);
         mMap.animateCamera(cameraUpdate);
 
-        PolylineOptions line = new PolylineOptions().add(toronto, mississauga, brampton, vaughan, toronto)
+        PolylineOptions line1 = new PolylineOptions().add(toronto, mississauga)
                 .width(5)
                 .color(Color.RED);
-        mMap.addPolyline(line);
+        PolylineOptions line2 = new PolylineOptions().add(mississauga, brampton)
+                .width(5)
+                .color(Color.RED);
+        PolylineOptions line3 = new PolylineOptions().add(brampton, vaughan)
+                .width(5)
+                .color(Color.RED);
+        PolylineOptions line4 = new PolylineOptions().add(vaughan, toronto)
+                .width(5)
+                .color(Color.RED);
+
+        line1.clickable(true);
+        line2.clickable(true);
+        line3.clickable(true);
+        line4.clickable(true);
+        mMap.addPolyline(line1);
+        mMap.addPolyline(line2);
+        mMap.addPolyline(line3);
+        mMap.addPolyline(line4);
+
+        mMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+            @Override
+            public void onPolylineClick(@NonNull Polyline polyline) {
+                List<LatLng> points = polyline.getPoints();
+                LatLng point1 = points.get(0);
+                LatLng point2 = points.get(1);
+
+                float[] results = {0};
+                Location.distanceBetween(point1.longitude, point2.latitude, point2.latitude, point2.longitude, results);
+            }
+        });
     }
 }
